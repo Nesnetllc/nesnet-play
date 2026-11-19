@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Nesnet Games">
   <meta name="theme-color" content="#000000">
-  <meta name="description" content="Play Nesnet games on Roblox">
-  <title>Nesnet Games</title>
+  <meta name="description" content="Play Nesnet games on Roblox and browse design documentation">
+  <title>Nesnet Games & Design Portal</title>
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="icon" href="apple-touch-icon.png" type="image/png">
   <style>
@@ -26,23 +26,81 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       min-height: 100dvh;
-      padding: max(24px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+      padding: max(24px, env(safe-area-inset-top)) 20px max(36px, env(safe-area-inset-bottom));
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
     }
 
     h1 {
-      font-size: clamp(2.6rem, 10vw, 5.5rem);
+      font-size: clamp(2.4rem, 7vw, 4.5rem);
       font-weight: 800;
       letter-spacing: 0.02em;
-      text-align: center;
       line-height: 1.1;
-      margin-bottom: 0.45em;
     }
 
-    .games {
+    .tagline {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: #888;
+      margin-top: 0.4rem;
+      font-weight: 500;
+    }
+
+    /* Dual Pane Layout */
+    .portal-container {
       width: 100%;
-      max-width: 720px;
+      max-width: 1280px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .portal-container {
+        grid-template-columns: 1fr;
+        gap: 3.5rem;
+      }
+    }
+
+    .pane {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .pane-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #333;
+      padding-bottom: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .pane-title {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .pane-badge {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: #222;
+      border: 1px solid #444;
+      color: #ccc;
+    }
+
+    /* Left Pane: Current Games */
+    .games-list {
       display: flex;
       flex-direction: column;
       gap: 1.4rem;
@@ -61,36 +119,23 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      min-height: 28vh;
-      padding: 1.1rem 1.2rem;
-      border-radius: 28px;
+      border-radius: 24px;
       text-decoration: none;
       font-weight: 800;
       text-align: center;
       line-height: 1.15;
-      border: 6px solid #fff;
+      border: 4px solid #fff;
       -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease, border-color 0.15s ease;
     }
 
     .play:focus-visible {
-      outline: 6px solid #fff;
-      outline-offset: 6px;
+      outline: 5px solid #fff;
+      outline-offset: 5px;
     }
 
     .play:active {
       transform: scale(0.98);
-    }
-
-    .play .name {
-      font-size: clamp(2.1rem, 8vw, 3.8rem);
-      display: block;
-    }
-
-    .play .action {
-      font-size: clamp(1.5rem, 5.5vw, 2.4rem);
-      font-weight: 800;
-      margin-top: 0.15em;
-      display: block;
     }
 
     .tile {
@@ -99,6 +144,13 @@
       overflow: hidden;
       background: #000;
       color: #fff;
+      max-width: 210px;
+      align-self: center;
+    }
+
+    .tile:hover {
+      border-color: #00ff88;
+      transform: translateY(-2px);
     }
 
     .tile img {
@@ -115,17 +167,22 @@
       color: #000;
       padding: 0.35em 0;
       margin-top: 0;
-      font-size: clamp(1rem, 4vw, 1.6rem);
+      font-size: clamp(1rem, 4vw, 1.5rem);
+      font-weight: 800;
+      display: block;
     }
 
-    .play.tile { max-width: 210px; align-self: center; }
-
     .fallback {
-      color: #fff;
-      font-size: clamp(1.05rem, 3.6vw, 1.35rem);
+      color: #aaa;
+      font-size: clamp(0.95rem, 3.2vw, 1.15rem);
       font-weight: 600;
       text-decoration: underline;
       text-underline-offset: 0.15em;
+      transition: color 0.15s;
+    }
+
+    .fallback:hover {
+      color: #fff;
     }
 
     .fallback:focus-visible {
@@ -133,67 +190,300 @@
       outline-offset: 4px;
     }
 
-    .note {
-      margin-top: 1.8rem;
-      max-width: 36rem;
-      text-align: center;
-      font-size: clamp(0.95rem, 3.2vw, 1.2rem);
-      line-height: 1.35;
+    /* Right Pane: Design Docs */
+    .category-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .category-header {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .category-header::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #282828;
+    }
+
+    .doc-card {
+      background: #0c0c0c;
+      border: 1px solid #282828;
+      border-radius: 14px;
+      padding: 1.1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
       color: #fff;
+      transition: all 0.2s ease;
+    }
+
+    .doc-card:hover {
+      background: #141414;
+      border-color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .doc-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .doc-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .doc-desc {
+      font-size: 0.88rem;
+      color: #888;
+      line-height: 1.3;
+    }
+
+    .doc-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #1f1f1f;
+      border: 1px solid #3a3a3a;
+      color: #00ff88;
+      white-space: nowrap;
+    }
+
+    .doc-badge.wiki {
+      color: #58a6ff;
+      border-color: #1f6feb;
+    }
+
+    .doc-badge.upcoming {
+      color: #e3b341;
+      border-color: #9e6a03;
+    }
+
+    .empty-placeholder {
+      background: #080808;
+      border: 1px dashed #282828;
+      border-radius: 12px;
+      padding: 1.2rem;
+      text-align: center;
+      color: #555;
+      font-size: 0.9rem;
+      font-style: italic;
+    }
+
+    .footer-note {
+      margin-top: 3.5rem;
+      max-width: 42rem;
+      text-align: center;
+      font-size: clamp(0.9rem, 3vw, 1.05rem);
+      line-height: 1.4;
+      color: #777;
       font-weight: 500;
     }
   </style>
 </head>
 <body>
-  <h1>Nesnet Games</h1>
 
-  <div class="games">
-    <div class="game">
-      <a class="play tile" aria-label="Play NesNet Games"
-         href="https://www.roblox.com/games/start?placeId=136635947882831">
-        <img src="nesnet-games-tile.png" alt="NesNet Games">
-        <span class="action">Play</span>
-      </a>
-      <a class="fallback" href="https://www.roblox.com/games/136635947882831">Open NesNet Games page</a>
-    </div>
+  <header>
+    <h1>Nesnet Games</h1>
+    <div class="tagline">Official Player Portal & Game Design Central</div>
+  </header>
 
-    <div class="game">
-      <a class="play tile" aria-label="Play Ring Master"
-         href="https://www.roblox.com/games/start?placeId=97233307430545">
-        <img src="ring-master-tile.png" alt="Ring Master">
-        <span class="action">Play</span>
-      </a>
-      <a class="fallback" href="https://www.roblox.com/games/97233307430545">Open Ring Master page</a>
-    </div>
+  <main class="portal-container">
+    
+    <!-- LEFT PANE: CURRENT GAMES -->
+    <section class="pane left-pane" aria-labelledby="heading-current-games">
+      <div class="pane-header">
+        <h2 class="pane-title" id="heading-current-games">Current Games</h2>
+        <span class="pane-badge">Roblox Launches</span>
+      </div>
 
-    <div class="game">
-      <a class="play tile" aria-label="Play Dragon Master"
-         href="https://www.roblox.com/games/start?placeId=113383827249232">
-        <img src="dragon-master-tile.png" alt="Dragon Master">
-        <span class="action">Play</span>
-      </a>
-      <a class="fallback" href="https://www.roblox.com/games/113383827249232">Open Dragon Master page</a>
-    </div>
-    <div class="game">
-      <a class="play tile" aria-label="Play Sky Master"
-         href="https://www.roblox.com/games/start?placeId=128649158424520">
-        <img src="sky-master-tile.png" alt="Sky Master">
-        <span class="action">Play</span>
-      </a>
-      <a class="fallback" href="https://www.roblox.com/games/128649158424520">Open Sky Master page</a>
-    </div>
-    <div class="game">
-      <a class="play tile" aria-label="Play Iron Duel"
-         href="https://www.roblox.com/games/start?placeId=76215084486882">
-        <img src="iron-duel-tile.png" alt="Iron Duel">
-        <span class="action">Play</span>
-      </a>
-      <a class="fallback" href="https://www.roblox.com/games/76215084486882">Open Iron Duel page</a>
-    </div>
-  </div>
+      <div class="games-list">
+        
+        <!-- NesNet Games -->
+        <div class="game">
+          <a class="play tile" aria-label="Play NesNet Games"
+             href="https://www.roblox.com/games/start?placeId=136635947882831">
+            <img src="nesnet-games-tile.png" alt="NesNet Games">
+            <span class="action">Play</span>
+          </a>
+          <a class="fallback" href="https://www.roblox.com/games/136635947882831">Open NesNet Games page</a>
+        </div>
 
-  <a class="fallback" style="margin-top: 1.8rem;" href="https://github.com/Nesnetllc/Vault-Raiders/blob/main/docs/wiki/Home.md" target="_blank" rel="noopener noreferrer">Vault Raiders Design Wiki</a>
+        <!-- Ring Master -->
+        <div class="game">
+          <a class="play tile" aria-label="Play Ring Master"
+             href="https://www.roblox.com/games/start?placeId=97233307430545">
+            <img src="ring-master-tile.png" alt="Ring Master">
+            <span class="action">Play</span>
+          </a>
+          <a class="fallback" href="https://www.roblox.com/games/97233307430545">Open Ring Master page</a>
+        </div>
 
-  <p class="note">You must be signed in to Roblox and a member of the Nesnet community.</p>
+        <!-- Dragon Master -->
+        <div class="game">
+          <a class="play tile" aria-label="Play Dragon Master"
+             href="https://www.roblox.com/games/start?placeId=113383827249232">
+            <img src="dragon-master-tile.png" alt="Dragon Master">
+            <span class="action">Play</span>
+          </a>
+          <a class="fallback" href="https://www.roblox.com/games/113383827249232">Open Dragon Master page</a>
+        </div>
+
+        <!-- Sky Master -->
+        <div class="game">
+          <a class="play tile" aria-label="Play Sky Master"
+             href="https://www.roblox.com/games/start?placeId=128649158424520">
+            <img src="sky-master-tile.png" alt="Sky Master">
+            <span class="action">Play</span>
+          </a>
+          <a class="fallback" href="https://www.roblox.com/games/128649158424520">Open Sky Master page</a>
+        </div>
+
+        <!-- Iron Duel -->
+        <div class="game">
+          <a class="play tile" aria-label="Play Iron Duel"
+             href="https://www.roblox.com/games/start?placeId=76215084486882">
+            <img src="iron-duel-tile.png" alt="Iron Duel">
+            <span class="action">Play</span>
+          </a>
+          <a class="fallback" href="https://www.roblox.com/games/76215084486882">Open Iron Duel page</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- RIGHT PANE: DESIGN DOCS -->
+    <section class="pane right-pane" aria-labelledby="heading-design-docs">
+      <div class="pane-header">
+        <h2 class="pane-title" id="heading-design-docs">Design Docs</h2>
+        <span class="pane-badge">Specs & Wikis</span>
+      </div>
+
+      <!-- Category 1: Published Games (Sorted Alphabetically) -->
+      <div class="category-group">
+        <div class="category-header">Published Games (Internal / Testing)</div>
+
+        <!-- Dragon Clash -->
+        <a class="doc-card" href="https://github.com/Nesnetllc/Dragon-Clash-Roblox" target="_blank" rel="noopener noreferrer">
+          <div class="doc-info">
+            <div class="doc-title">Dragon Clash</div>
+            <div class="doc-desc">Tactical turn-based board game for Roblox</div>
+          </div>
+          <span class="doc-badge">Repo</span>
+        </a>
+
+        <!-- Dragon Master -->
+        <a class="doc-card" href="https://github.com/Nesnetllc/Dragon-Master" target="_blank" rel="noopener noreferrer">
+          <div class="doc-info">
+            <div class="doc-title">Dragon Master</div>
+            <div class="doc-desc">Tactical dragon battle arenas and progression</div>
+          </div>
+          <span class="doc-badge">Repo</span>
+        </a>
+
+        <!-- Galaxy Swarm -->
+        <a class="doc-card" href="https://github.com/Nesnetllc/Galaxy-Swarm/blob/main/docs/wiki/Home.md" target="_blank" rel="noopener noreferrer">
+          <div class="doc-info">
+            <div class="doc-title">Galaxy Swarm</div>
+            <div class="doc-desc">Galaga-style arcade starter with timed upgrade store</div>
+          </div>
+          <span class="doc-badge wiki">Wiki / GDD</span>
+        </a>
+
+        <!-- Iron Duel -->
+        <a class="doc-card" href="https://github.com/Nesnetllc/Iron-Duel-Roblox" target="_blank" rel="noopener noreferrer">
+          <div class="doc-info">
+            <div class="doc-title">Iron Duel</div>
+            <div class="doc-desc">Armored tank dueling game for Roblox</div>
+          </div>
+          <span class="doc-badge">Repo</span>
+        </a>
+
+        <!-- NesNet Games (Hub) -->
+        <a class="doc-card" href="https://github.com/Nesnetllc/Nesnet-Hub/blob/main/docs/wiki/Home.md" target="_blank" rel="noopener noreferrer">
+          <div class="doc-info">
+            <div class="doc-title">NesNet Hub (Games Lobby)</div>
+            <div class="doc-desc">Central lobby with teleport rings and match queues</div>
+          </div>
+          <span class="doc-badge wiki">Wiki / GDD</span>
+        </a>
+
+        <!-- Ring Master -->
+        <a class="doc-card" href="https://github.com/Nesnetllc/Ring-Master" target="_blank" rel="noopener noreferrer">
+          <div class="doc-info">
+            <div class="doc-title">Ring Master</div>
+            <div class="doc-desc">Circular arena combat with dynamic leaderboards</div>
+          </div>
+          <span class="doc-badge">Repo</span>
+        </a>
+
+        <!-- Sky Master -->
+        <a class="doc-card" href="https://github.com/Nesnetllc/Sky-Master" target="_blank" rel="noopener noreferrer">
+          <div class="doc-info">
+            <div class="doc-title">Sky Master</div>
+            <div class="doc-desc">Flight challenge and aerial navigation scoring</div>
+          </div>
+          <span class="doc-badge">Repo</span>
+        </a>
+      </div>
+
+      <!-- Category 2: Unpublished Designs (Sorted Alphabetically) -->
+      <div class="category-group">
+        <div class="category-header">Unpublished Designs</div>
+
+        <!-- Tank Attack -->
+        <a class="doc-card" href="https://github.com/Nesnetllc/Tank-Attack/blob/main/docs/wiki/Home.md" target="_blank" rel="noopener noreferrer">
+          <div class="doc-info">
+            <div class="doc-title">Tank Attack</div>
+            <div class="doc-desc">2D tank duel, ricochet ballistics, Galaxy Storm upgrade store</div>
+          </div>
+          <span class="doc-badge wiki">Wiki / GDD</span>
+        </a>
+
+        <!-- Vault Raiders -->
+        <a class="doc-card" href="https://github.com/Nesnetllc/Vault-Raiders/blob/main/docs/wiki/Home.md" target="_blank" rel="noopener noreferrer">
+          <div class="doc-info">
+            <div class="doc-title">Vault Raiders</div>
+            <div class="doc-desc">Vault building, chest hiding, asymmetric raid mechanics</div>
+          </div>
+          <span class="doc-badge wiki">Wiki / GDD</span>
+        </a>
+      </div>
+
+      <!-- Category 3: Publicly Released (Staging Placeholder) -->
+      <div class="category-group">
+        <div class="category-header">Publicly Released</div>
+        <div class="empty-placeholder">
+          Games will appear here once officially launched to the public Roblox catalog.
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="footer-note">
+    <p>You must be signed in to Roblox and an authorized member of the Nesnet organization to access unreleased experiences and internal repository docs.</p>
+  </footer>
+
 </body>
 </html>
