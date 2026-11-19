@@ -190,6 +190,23 @@
       outline-offset: 4px;
     }
 
+    .wiki-sublink {
+      font-size: clamp(0.85rem, 2.8vw, 1rem);
+      color: #58a6ff;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 1px;
+      transition: color 0.15s;
+    }
+
+    .wiki-sublink:hover {
+      color: #79c0ff;
+      text-decoration: underline;
+    }
+
     /* Right Pane: Design Docs */
     .category-group {
       display: flex;
@@ -326,6 +343,7 @@
             <span class="action">Play</span>
           </a>
           <a class="fallback" href="https://www.roblox.com/games/136635947882831">Open NesNet Games page</a>
+          <a class="wiki-sublink" href="https://github.com/Nesnetllc/Nesnet-Hub/blob/main/docs/wiki/Home.md" target="_blank" rel="noopener noreferrer">📖 Design Wiki</a>
         </div>
 
         <!-- Ring Master -->
@@ -366,6 +384,7 @@
             <span class="action">Play</span>
           </a>
           <a class="fallback" href="https://www.roblox.com/games/76215084486882">Open Iron Duel page</a>
+          <a class="wiki-sublink" href="https://github.com/Nesnetllc/Iron-Duel-Roblox/blob/main/docs/wiki/Home.md" target="_blank" rel="noopener noreferrer">📖 Design Wiki</a>
         </div>
 
       </div>
